@@ -8,6 +8,10 @@
 
 import UIKit
 
+enum ErroLeilaoDao: Error {
+    case NaoAtualizou(String)
+}
+
 class LeilaoDao: NSObject {
     
     private var dataBase : OpaquePointer? = nil
@@ -91,7 +95,9 @@ class LeilaoDao: NSObject {
         return listaDeLeilao
     }
     
-    func atualiza(leilao:Leilao) {
+    func atualiza(leilao:Leilao) throws {
+        
+        
         guard let idDoLeilao = leilao.id else { return }
         
         guard let status = leilao.encerrado else { return }
@@ -101,7 +107,10 @@ class LeilaoDao: NSObject {
         let dataDoLeilao = FormatadorData.formataDataParaString(data)
         
         let sql = "update LEILAO set descricao = '\(leilao.descricao)', encerrado = '\(statusDoLeilao)', data = '\(dataDoLeilao)' where id = '\(idDoLeilao)'"
-        
-        executaQuery(sql)
+    
+//        executaQuery(sql)
+        if !(sqlite3_exec(dataBase, sql, nil, nil, nil) == SQLITE_OK) {
+            throw ErroLeilaoDao.NaoAtualizou("Erro ao atualizar Leilão.")
+        }
     }
 }

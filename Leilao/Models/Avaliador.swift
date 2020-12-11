@@ -18,6 +18,11 @@ class Avaliador {
     private var menorDeTodos = Double.greatestFiniteMagnitude
     private var maiores:[Lance] = []
     
+//    init() {
+//        maiorDeTodos = Double.leastNormalMagnitude
+//        menorDeTodos = Double.greatestFiniteMagnitude
+//    }
+    
     func avalia(leilao:Leilao) throws {
         
         if leilao.lances?.count == 0 {

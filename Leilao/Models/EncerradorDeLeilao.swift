@@ -11,15 +11,27 @@ import Foundation
 class EncerradorDeLeilao {
     
     private var total = 0
+    private var dao: LeilaoDao
+    private var carteiro: Carteiro
+    
+    init(_ leilaoDao:LeilaoDao, _ carteiro: Carteiro) {
+        self.dao = leilaoDao
+        self.carteiro = carteiro
+    }
     
     func encerra() {
-        let dao = LeilaoDao()
+//        let dao = LeilaoDao()
         let todosLeiloesCorrentes = dao.correntes()
         for leilao in todosLeiloesCorrentes {
             if comecouSemanaPassada(leilao) {
                 leilao.encerra()
                 total+=1
-                dao.atualiza(leilao: leilao)
+                do {
+                    try dao.atualiza(leilao: leilao)
+                    carteiro.envia(leilao)
+                } catch {
+                    print(error.localizedDescription)
+                }
             }
         }
     }
